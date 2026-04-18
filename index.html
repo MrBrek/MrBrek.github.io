@@ -22,7 +22,6 @@
             overflow-x: hidden;
         }
 
-        /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 6px;
         }
@@ -34,7 +33,6 @@
             border-radius: 8px;
         }
 
-        /* Glassmorphism & effects */
         .glass-nav {
             background: rgba(15, 15, 18, 0.75);
             backdrop-filter: blur(12px);
@@ -102,19 +100,50 @@
         .delay-200 { animation-delay: 0.2s; opacity: 0; }
         .delay-300 { animation-delay: 0.3s; opacity: 0; }
         .delay-400 { animation-delay: 0.4s; opacity: 0; }
+        
+        /* Анимация загрузки */
+        .loader {
+            border: 2px solid rgba(139, 92, 246, 0.3);
+            border-top: 2px solid #8b5cf6;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            animation: spin 0.8s linear infinite;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Уведомление */
+        .toast-notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            animation: slideInRight 0.3s ease;
+        }
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
     </style>
 </head>
 <body>
 
-    <!-- ======================== МОДАЛЬНОЕ ОКНО АВТОРИЗАЦИИ ======================== -->
+    <!-- Модальное окно авторизации -->
     <div id="authModal" class="fixed inset-0 z-50 flex items-center justify-center px-4 transition-all duration-300" style="background: rgba(0,0,0,0.8); backdrop-filter: blur(6px); visibility: hidden; opacity: 0;">
         <div class="auth-modal rounded-2xl w-full max-w-md p-6 relative transform transition-all scale-95">
             <button id="closeAuthModal" class="absolute top-4 right-5 text-gray-400 hover:text-white text-2xl">&times;</button>
             <div class="text-center mb-5">
                 <span class="text-3xl font-bold gradient-text">Expensive</span>
-                <p class="text-gray-400 text-sm mt-1">Войдите или создайте аккаунт</p>
+                <p class="text-gray-400 text-sm mt-1" id="authModalTitle">Войдите в аккаунт</p>
             </div>
             <div id="authError" class="bg-red-500/20 border border-red-500/40 text-red-200 text-sm p-2 rounded-lg mb-4 hidden"></div>
+            <div id="authSuccess" class="bg-green-500/20 border border-green-500/40 text-green-200 text-sm p-2 rounded-lg mb-4 hidden"></div>
+            
             <!-- Форма входа -->
             <div id="loginForm">
                 <input type="email" id="loginEmail" placeholder="Email" class="w-full p-3 rounded-xl text-white text-sm mb-3">
@@ -122,18 +151,34 @@
                 <button id="doLoginBtn" class="w-full btn-primary py-2.5 rounded-xl font-semibold text-white">Войти</button>
                 <p class="text-center text-gray-400 text-xs mt-4">Нет аккаунта? <button id="showRegisterBtn" class="text-purple-400 hover:underline">Зарегистрироваться</button></p>
             </div>
-            <!-- Форма регистрации (скрыта) -->
+            
+            <!-- Форма регистрации -->
             <div id="registerForm" class="hidden">
                 <input type="text" id="regUsername" placeholder="Имя пользователя" class="w-full p-3 rounded-xl text-white text-sm mb-3">
                 <input type="email" id="regEmail" placeholder="Email" class="w-full p-3 rounded-xl text-white text-sm mb-3">
                 <input type="password" id="regPassword" placeholder="Пароль (мин. 6 символов)" class="w-full p-3 rounded-xl text-white text-sm mb-4">
-                <button id="doRegisterBtn" class="w-full btn-primary py-2.5 rounded-xl font-semibold text-white">Создать аккаунт</button>
+                <button id="doRegisterBtn" class="w-full btn-primary py-2.5 rounded-xl font-semibold text-white">Зарегистрироваться</button>
                 <p class="text-center text-gray-400 text-xs mt-4">Уже есть аккаунт? <button id="showLoginBtn" class="text-purple-400 hover:underline">Войти</button></p>
+            </div>
+            
+            <!-- Форма подтверждения email (показывается после регистрации) -->
+            <div id="confirmForm" class="hidden">
+                <div class="text-center mb-4">
+                    <div class="w-16 h-16 mx-auto bg-purple-500/20 rounded-full flex items-center justify-center mb-3">
+                        <svg class="w-8 h-8 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+                    <p class="text-white text-sm mb-2">Подтверждение email</p>
+                    <p class="text-gray-400 text-xs" id="confirmEmailText">Мы отправили письмо на ваш email</p>
+                </div>
+                <p class="text-center text-gray-500 text-xs mt-4">После подтверждения перейдите на страницу входа</p>
+                <button id="backToLoginBtn" class="w-full mt-3 border border-white/20 py-2 rounded-xl text-sm hover:bg-white/5 transition">Назад к входу</button>
             </div>
         </div>
     </div>
 
-    <!-- ========================== ШАПКА (NAV) ========================== -->
+    <!-- Шапка сайта -->
     <header class="fixed top-0 left-0 w-full z-40 px-4 pt-4">
         <div class="max-w-6xl mx-auto glass-nav rounded-full px-5 py-2.5 flex items-center justify-between">
             <div class="flex items-center gap-2">
@@ -168,11 +213,6 @@
                     <a href="#purchase" class="btn-primary px-8 py-3 rounded-full font-semibold text-white">Купить продукт →</a>
                     <a href="#" class="border border-white/20 hover:bg-white/5 px-8 py-3 rounded-full font-medium transition">Поддержка</a>
                 </div>
-                <div class="mt-16 animate-hero delay-400">
-                    <div class="inline-block p-1 rounded-xl bg-gradient-to-r from-purple-500/20 to-pink-500/20">
-                        <img src="https://placehold.co/900x500/1a1a24/white?text=Expensive+Client+Preview" alt="preview" class="rounded-lg max-w-full shadow-2xl border border-white/10" style="max-width: 85vw;">
-                    </div>
-                </div>
             </div>
         </section>
 
@@ -203,13 +243,12 @@
             </div>
         </section>
 
-        <!-- Purchase & License Dashboard -->
+        <!-- Purchase Section -->
         <section id="purchase" class="py-20 px-5 bg-gradient-to-b from-transparent to-black/40">
             <div class="max-w-5xl mx-auto text-center">
                 <h2 class="text-4xl font-bold mb-4">Приобретите лицензию</h2>
                 <p class="text-gray-300 mb-8">Доступ к приватным сборкам, приоритетная поддержка и эксклюзивные обновления.</p>
                 
-                <!-- Карточка с ценой и кнопкой покупки (только для авторизованных) -->
                 <div class="dashboard-card max-w-md mx-auto rounded-2xl p-6 text-left">
                     <div class="flex justify-between items-start">
                         <div>
@@ -225,7 +264,6 @@
                         <li>✓ Доступ к эксклюзивным конфигам</li>
                     </ul>
                     <div id="purchasePanel" class="mt-6">
-                        <!-- Контент зависит от статуса авторизации -->
                         <button id="buyNowBtn" class="w-full btn-primary py-2.5 rounded-xl font-bold" disabled>Войдите, чтобы купить</button>
                     </div>
                     <div id="licenseInfo" class="mt-4 text-xs text-center text-gray-500 hidden">
@@ -233,7 +271,6 @@
                     </div>
                 </div>
 
-                <!-- Личный кабинет: отображение лицензии -->
                 <div id="dashboardArea" class="mt-12 dashboard-card rounded-2xl p-5 text-left hidden">
                     <div class="flex flex-wrap justify-between items-center gap-3">
                         <div>
@@ -252,11 +289,11 @@
     </main>
 
     <footer class="border-t border-white/5 py-8 text-center text-gray-500 text-xs">
-        <p>© 2025 Expensive Client. All rights reserved. Minecraft is a trademark of Mojang Studios.</p>
+        <p>© 2025 Expensive Client. All rights reserved.</p>
     </footer>
 
     <script>
-        // ---------- ИНИЦИАЛИЗАЦИЯ SUPABASE ----------
+        // Supabase конфигурация
         const SUPABASE_URL = "https://faeivnmmpnslyxrmmkea.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhZWl2bm1tcG5zbHl4cm1ta2VhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwOTk5NjksImV4cCI6MjA5MTY3NTk2OX0.bxvwz8cIM6WVKF1yhQpPNoGHv9ObuC2tEycfPmD8PB0";
 
@@ -268,95 +305,113 @@
         const closeModalBtn = document.getElementById('closeAuthModal');
         const loginFormDiv = document.getElementById('loginForm');
         const registerFormDiv = document.getElementById('registerForm');
+        const confirmFormDiv = document.getElementById('confirmForm');
         const showRegisterBtn = document.getElementById('showRegisterBtn');
         const showLoginBtn = document.getElementById('showLoginBtn');
+        const backToLoginBtn = document.getElementById('backToLoginBtn');
         const authErrorDiv = document.getElementById('authError');
+        const authSuccessDiv = document.getElementById('authSuccess');
         const userGreetingSpan = document.getElementById('userGreeting');
         const dashboardArea = document.getElementById('dashboardArea');
         const licenseStatusText = document.getElementById('licenseStatusText');
         const buyNowBtn = document.getElementById('buyNowBtn');
         const licenseInfoDiv = document.getElementById('licenseInfo');
         const logoutBtn = document.getElementById('logoutBtn');
+        const authModalTitle = document.getElementById('authModalTitle');
 
         let currentUser = null;
-        let userLicense = null;   // поле "license" из таблицы profiles
+        let userLicense = null;
+        let pendingEmail = null;
 
-        // Функция отображения ошибки
-        function showAuthError(message) {
+        function showError(message) {
             authErrorDiv.innerText = message;
             authErrorDiv.classList.remove('hidden');
-            setTimeout(() => authErrorDiv.classList.add('hidden'), 4000);
+            authSuccessDiv.classList.add('hidden');
+            setTimeout(() => authErrorDiv.classList.add('hidden'), 5000);
         }
 
-        // Загрузка профиля (проверка лицензии)
+        function showSuccess(message) {
+            authSuccessDiv.innerText = message;
+            authSuccessDiv.classList.remove('hidden');
+            authErrorDiv.classList.add('hidden');
+            setTimeout(() => authSuccessDiv.classList.add('hidden'), 5000);
+        }
+
+        // Загрузка профиля пользователя
         async function loadUserProfile(userId) {
             try {
-                const { data, error } = await supabase
+                let { data, error } = await supabase
                     .from('profiles')
                     .select('license, username')
                     .eq('id', userId)
-                    .single();
-                if (error) {
-                    console.warn("Профиль не найден, создаём запись...");
-                    // Создаём профиль, если его нет
-                    const { data: newProfile, error: insertError } = await supabase
-                        .from('profiles')
-                        .insert([{ id: userId, license: false, username: currentUser?.email?.split('@')[0] || 'user' }])
-                        .select()
-                        .single();
-                    if (insertError) {
-                        console.error("Ошибка создания профиля", insertError);
-                        return;
-                    }
-                    if (newProfile) {
-                        userLicense = newProfile.license;
-                        updateUIafterAuth();
-                    }
-                } else if (data) {
-                    userLicense = data.license;
-                    updateUIafterAuth();
+                    .maybeSingle();
+                    
+                if (error && error.code !== 'PGRST116') {
+                    console.error("Ошибка загрузки профиля:", error);
+                    return;
                 }
+                
+                if (!data) {
+                    const { error: insertError } = await supabase
+                        .from('profiles')
+                        .insert([{ id: userId, license: false, username: currentUser?.email?.split('@')[0] || 'user' }]);
+                    if (insertError) console.error("Ошибка создания профиля:", insertError);
+                    userLicense = false;
+                } else {
+                    userLicense = data.license;
+                }
+                updateUIafterAuth();
             } catch(e) { console.error(e); }
+        }
+
+        // Проверка сессии
+        async function checkSession() {
+            const { data: { session }, error } = await supabase.auth.getSession();
+            if (session?.user) {
+                currentUser = session.user;
+                await loadUserProfile(currentUser.id);
+            } else {
+                currentUser = null;
+                updateUIafterAuth();
+            }
         }
 
         // Обновление UI после авторизации
         function updateUIafterAuth() {
             if (currentUser) {
-                userGreetingSpan.innerText = `${currentUser.email?.split('@')[0] || 'User'}`;
+                userGreetingSpan.innerText = currentUser.email?.split('@')[0] || 'User';
                 userGreetingSpan.classList.remove('hidden');
                 openModalBtn.classList.add('hidden');
-                // Показываем панель
                 dashboardArea.classList.remove('hidden');
+                
                 if (userLicense === true) {
                     licenseStatusText.innerHTML = '✅ Активна (Premium)';
                     buyNowBtn.innerText = 'Активировано';
                     buyNowBtn.disabled = true;
                     buyNowBtn.style.opacity = '0.6';
                     licenseInfoDiv.classList.remove('hidden');
-                    licenseInfoDiv.innerHTML = '<span class="text-green-400">★ Лицензия подтверждена — спасибо за покупку!</span>';
-                } else {
+                    licenseInfoDiv.innerHTML = '<span class="text-green-400">★ Лицензия подтверждена!</span>';
+                                } else {
                     licenseStatusText.innerHTML = '❌ Не активирована';
                     buyNowBtn.innerText = 'Купить лицензию';
                     buyNowBtn.disabled = false;
                     buyNowBtn.style.opacity = '1';
                     licenseInfoDiv.classList.add('hidden');
                 }
-                // Событие на кнопку покупки (имитация оплаты + обновление Supabase)
+                
                 buyNowBtn.onclick = async () => {
                     if (!currentUser) {
                         alert("Пожалуйста, войдите в аккаунт");
                         return;
                     }
-                    // Имитируем успешный платёж — обновляем license = true в таблице profiles
                     const { error } = await supabase
                         .from('profiles')
                         .update({ license: true })
                         .eq('id', currentUser.id);
                     if (error) {
-                        console.error(error);
                         alert("Ошибка активации: " + error.message);
                     } else {
-                        alert("✅ Лицензия успешно активирована! Добро пожаловать в Premium.");
+                        alert("✅ Лицензия успешно активирована!");
                         userLicense = true;
                         updateUIafterAuth();
                     }
@@ -374,13 +429,144 @@
         async function login(email, password) {
             const { data, error } = await supabase.auth.signInWithPassword({ email, password });
             if (error) {
-                showAuthError(error.message);
+                if (error.message.includes('Email not confirmed')) {
+                    showError("Подтвердите email! Перейдите по ссылке из письма.");
+                } else {
+                    showError(error.message);
+                }
                 return false;
             }
+            
+            if (data.user && !data.user.email_confirmed_at) {
+                showError("Подтвердите email! Письмо отправлено на " + email);
+                await supabase.auth.signOut();
+                return false;
+            }
+            
             currentUser = data.user;
             await loadUserProfile(currentUser.id);
             closeModal();
+            showSuccess("Добро пожаловать, " + (currentUser.email?.split('@')[0]) + "!");
             return true;
         }
 
-        // Регистрация + автоматическое создание
+        // Регистрация
+        async function register(username, email, password) {
+            const { data, error } = await supabase.auth.signUp({ 
+                email, 
+                password,
+                options: { 
+                    data: { username: username }
+                }
+            });
+            
+            if (error) {
+                showError(error.message);
+                return false;
+            }
+            
+            if (data.user) {
+                // Создаём профиль
+                await supabase
+                    .from('profiles')
+                    .upsert([{ id: data.user.id, license: false, username: username }]);
+                
+                pendingEmail = email;
+                showRegisterSuccess(email);
+            }
+            return true;
+        }
+        
+        function showRegisterSuccess(email) {
+            loginFormDiv.classList.add('hidden');
+            registerFormDiv.classList.add('hidden');
+            confirmFormDiv.classList.remove('hidden');
+            authModalTitle.innerText = "Проверьте почту";
+            const confirmText = document.getElementById('confirmEmailText');
+            if (confirmText) confirmText.innerHTML = `Мы отправили письмо с подтверждением на <strong>${email}</strong><br><span class="text-gray-500 text-xs">Проверьте папку "Спам"</span>`;
+            showSuccess("Письмо отправлено! Подтвердите email и войдите.");
+        }
+
+        function showLoginForm() {
+            loginFormDiv.classList.remove('hidden');
+            registerFormDiv.classList.add('hidden');
+            confirmFormDiv.classList.add('hidden');
+            authModalTitle.innerText = "Войдите в аккаунт";
+            authErrorDiv.classList.add('hidden');
+            authSuccessDiv.classList.add('hidden');
+        }
+        
+        function showRegisterForm() {
+            loginFormDiv.classList.add('hidden');
+            registerFormDiv.classList.remove('hidden');
+            confirmFormDiv.classList.add('hidden');
+            authModalTitle.innerText = "Создать аккаунт";
+            authErrorDiv.classList.add('hidden');
+            authSuccessDiv.classList.add('hidden');
+        }
+
+        function openModal() {
+            showLoginForm();
+            authModal.style.visibility = 'visible';
+            authModal.style.opacity = '1';
+        }
+        
+        function closeModal() {
+            authModal.style.visibility = 'hidden';
+            authModal.style.opacity = '0';
+            showLoginForm();
+        }
+
+        // Обработчики
+        openModalBtn.addEventListener('click', openModal);
+        closeModalBtn.addEventListener('click', closeModal);
+        showRegisterBtn.addEventListener('click', showRegisterForm);
+        showLoginBtn.addEventListener('click', showLoginForm);
+        backToLoginBtn.addEventListener('click', showLoginForm);
+        logoutBtn?.addEventListener('click', async () => {
+            await supabase.auth.signOut();
+            currentUser = null;
+            userLicense = null;
+            updateUIafterAuth();
+            showSuccess("Вы вышли из аккаунта");
+        });
+        
+        document.getElementById('doLoginBtn')?.addEventListener('click', async () => {
+            const email = document.getElementById('loginEmail').value;
+            const pass = document.getElementById('loginPassword').value;
+            if (!email || !pass) { showError("Заполните email и пароль"); return; }
+            await login(email, pass);
+        });
+        
+        document.getElementById('doRegisterBtn')?.addEventListener('click', async () => {
+            const username = document.getElementById('regUsername').value;
+            const email = document.getElementById('regEmail').value;
+            const pass = document.getElementById('regPassword').value;
+            if (!username || !email || pass.length < 6) {
+                showError("Имя, email и пароль (мин 6 символов) обязательны");
+                return;
+            }
+            await register(username, email, pass);
+        });
+
+        authModal.addEventListener('click', (e) => {
+            if (e.target === authModal) closeModal();
+        });
+
+        // Проверяем подтверждение email при загрузке (если перешли по ссылке)
+        async function handleEmailConfirmation() {
+            const hash = window.location.hash;
+            if (hash.includes('access_token')) {
+                const { data, error } = await supabase.auth.getSession();
+                if (data?.session) {
+                    showSuccess("Email подтверждён! Теперь вы можете войти.");
+                    window.location.hash = '';
+                }
+            }
+        }
+        
+        checkSession();
+        handleEmailConfirmation();
+    </script>
+</body>
+</html>
