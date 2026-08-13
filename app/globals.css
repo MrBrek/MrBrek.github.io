@@ -1,0 +1,81 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f7f7f5;
+  --foreground: #20201e;
+  --panel: #ffffff;
+  --panel-muted: #f0f0ed;
+  --border: #e2e2dd;
+  --muted: #74746f;
+  --accent: #20201e;
+  --accent-contrast: #ffffff;
+  --danger: #b42318;
+}
+
+.dark {
+  --background: #171716;
+  --foreground: #f4f4ef;
+  --panel: #20201e;
+  --panel-muted: #2a2a27;
+  --border: #373733;
+  --muted: #a1a19a;
+  --accent: #f4f4ef;
+  --accent-contrast: #20201e;
+  --danger: #ff857b;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-panel: var(--panel);
+  --color-panel-muted: var(--panel-muted);
+  --color-border: var(--border);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-contrast: var(--accent-contrast);
+  --color-danger: var(--danger);
+  --font-sans: "Inter", "SF Pro Text", "Segoe UI", sans-serif;
+}
+
+* { box-sizing: border-box; }
+html, body { min-height: 100%; }
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  text-rendering: optimizeLegibility;
+}
+button, textarea, input { font: inherit; }
+button { cursor: pointer; }
+button:disabled { cursor: not-allowed; }
+::selection { background: color-mix(in srgb, var(--foreground) 16%, transparent); }
+
+.scrollbar-thin { scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
+.scrollbar-thin::-webkit-scrollbar { width: 6px; height: 6px; }
+.scrollbar-thin::-webkit-scrollbar-thumb { background: var(--border); border-radius: 999px; }
+
+.markdown { color: var(--foreground); line-height: 1.7; }
+.markdown > :first-child { margin-top: 0; }
+.markdown > :last-child { margin-bottom: 0; }
+.markdown h1, .markdown h2, .markdown h3 { font-weight: 650; letter-spacing: -0.02em; line-height: 1.25; margin: 1.25em 0 .55em; }
+.markdown h1 { font-size: 1.35rem; }
+.markdown h2 { font-size: 1.15rem; }
+.markdown h3 { font-size: 1rem; }
+.markdown p, .markdown ul, .markdown ol, .markdown blockquote, .markdown pre, .markdown table { margin: .8em 0; }
+.markdown ul, .markdown ol { padding-left: 1.4rem; }
+.markdown ul { list-style: disc; }
+.markdown ol { list-style: decimal; }
+.markdown li + li { margin-top: .28rem; }
+.markdown a { text-decoration: underline; text-underline-offset: 3px; }
+.markdown blockquote { border-left: 2px solid var(--border); color: var(--muted); padding-left: 1rem; }
+.markdown code:not(pre code) { background: var(--panel-muted); border: 1px solid var(--border); border-radius: 5px; padding: .12rem .32rem; font-size: .9em; }
+.markdown table { display: block; max-width: 100%; overflow-x: auto; border-collapse: collapse; }
+.markdown th, .markdown td { border: 1px solid var(--border); padding: .5rem .7rem; text-align: left; white-space: nowrap; }
+.markdown th { background: var(--panel-muted); font-weight: 600; }
+
+@keyframes fade-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
