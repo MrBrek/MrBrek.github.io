@@ -159,6 +159,8 @@ button:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
     <button class="pri" id="claim" hidden>🎁 Принять 1M бесплатных токенов</button>
     <div class="mut">Твоя реферальная ссылка:</div>
     <div class="ref"><input id="rf" readonly><button id="cp">Копировать</button></div>
+    <div class="mut" style="margin-top:14px">Есть реферальный код?</div>
+    <div class="ref"><input id="rc" placeholder="Код из ссылки"><button id="rcb">Ввести</button></div>
     <div class="mut" style="margin-top:14px">Пополнить (минимум $0.10)</div>
     <div class="amts" id="amts"></div>
     <div class="ref"><input id="am" type="number" min="0.1" step="0.1" placeholder="Своя сумма, $"><button id="pay">Оплатить</button></div>
@@ -524,6 +526,8 @@ $("ok").onclick = async () => { try{ done((await api("/api/verify", {email: pend
 $("ghb").onclick = () => { location.href = `https://github.com/login/oauth/authorize?client_id=${GITHUB_ID}&scope=user:email&state=gh&redirect_uri=${encodeURIComponent(location.origin + location.pathname)}`; };
 $("claim").onclick = async () => { try{ await api("/api/claim", {}, true); am("cmsg", "Начислено 1M токенов 🎉", true); showCab(); }catch(x){ am("cmsg", x.message); } };
 $("cp").onclick = () => { $("rf").select(); navigator.clipboard?.writeText($("rf").value); am("cmsg", "Ссылка скопирована", true); };
+$("rc").value = localStorage.getItem("gai_ref") || "";
+$("rcb").onclick = async () => { try{ await api("/api/redeem", {code: $("rc").value.trim()}, true); am("cmsg", "Код принят, бонус начислен", true); showCab(); }catch(x){ am("cmsg", x.message); } };
 $("lo").onclick = () => { localStorage.removeItem("gai_tok"); $("ov").hidden = true; };
 [0.1, 1, 5, 10, 25, 50, 100].forEach(v => { const b = document.createElement("button"); b.textContent = "$" + v; b.onclick = () => { $("am").value = v; }; $("amts").appendChild(b); });
 function showPay(url){
