@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GrizzlyAI — ГДЗ с ИИ</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐻</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<style>
+:root{--paper:#f6f9fd;--grid:#d9e5f3;--ink:#1c3fb8;--bear:#4a2f1b;--margin:#e2553a;--card:#fff;--text:#18202e;--mute:#6a7790;--line:#c9d6e8}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--paper:#121a2b;--grid:#1c2740;--ink:#8fa8ff;--bear:#e9c9a8;--card:#1a2338;--text:#e7edf9;--mute:#8a98b5;--line:#2c3a58}}
+:root[data-theme=dark]{--paper:#121a2b;--grid:#1c2740;--ink:#8fa8ff;--bear:#e9c9a8;--card:#1a2338;--text:#e7edf9;--mute:#8a98b5;--line:#2c3a58}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{font-family:'Fira Sans',system-ui,sans-serif;color:var(--text);background-color:var(--paper);
+background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px;
+padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.app{height:100%;max-width:1000px;margin:0 auto;display:flex;flex-direction:column;position:relative;min-height:0}
+@supports(height:100dvh){body{height:100dvh}}
+.app::before{content:"";position:absolute;top:0;bottom:0;left:44px;width:2px;background:var(--margin);opacity:.55;pointer-events:none}
+header{display:flex;align-items:center;gap:12px;padding:12px 16px 8px 60px}
+.logo{font-weight:800;font-size:22px;color:var(--bear);letter-spacing:-.3px}
+.logo span{font-size:26px;margin-right:6px}
+.tag{font-size:13px;color:var(--mute);flex:1}
+.ib{border:1.5px solid var(--line);background:var(--card);color:var(--text);border-radius:10px;width:38px;height:38px;font-size:17px;cursor:pointer}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:4px 16px 10px 60px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1.5px solid var(--line);background:var(--card);color:var(--text);border-radius:999px;padding:7px 14px;font:500 14px inherit;font-family:inherit;cursor:pointer}
+.chip[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:#fff}
+@media (prefers-color-scheme:dark){.chip[aria-pressed=true]{color:#0e1526}}
+main{flex:1;min-height:0;overflow-y:auto;padding:8px 16px 16px 60px;display:flex;flex-direction:column;gap:14px;scroll-behavior:smooth}
+.hero{margin:auto 0;max-width:560px}
+.hero h1{font-size:clamp(28px,6vw,44px);line-height:1.08;margin:0 0 10px;color:var(--bear);letter-spacing:-.8px}
+.hero p{margin:0 0 16px;color:var(--mute);font-size:16px;line-height:1.5}
+.ex{display:flex;flex-wrap:wrap;gap:8px}
+.ex button{border:1.5px dashed var(--ink);background:transparent;color:var(--ink);border-radius:10px;padding:8px 12px;font:500 14px 'Fira Sans',sans-serif;cursor:pointer;text-align:left}
+.msg{max-width:min(720px,100%);padding:12px 14px;border-radius:14px;line-height:1.6;font-size:16px;white-space:pre-wrap;word-wrap:break-word;overflow-wrap:anywhere}
+.msg.u{align-self:flex-end;background:var(--ink);color:#fff;border-bottom-right-radius:4px}
+@media (prefers-color-scheme:dark){.msg.u{color:#0e1526}}
+.msg.a{align-self:flex-start;background:var(--card);border:1.5px solid var(--line);border-bottom-left-radius:4px}
+.msg.a .who{font-weight:700;font-size:13px;color:var(--bear);margin-bottom:4px}
+.msg img{max-width:100%;max-height:220px;border-radius:8px;display:block;margin-bottom:8px}
+.msg pre{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:10px;overflow-x:auto;margin:8px 0;white-space:pre;font-size:14px}
+.msg code{font-family:ui-monospace,Consolas,monospace;font-size:.92em}
+.msg .katex-display{overflow-x:auto;overflow-y:hidden}
+.fhead{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:8px;padding:6px 10px;background:var(--line);border-radius:8px 8px 0 0;font-size:13px;font-weight:500;white-space:normal}
+.fhead+pre{margin-top:0;border-top-left-radius:0;border-top-right-radius:0}
+.dl{border:0;border-radius:8px;background:var(--ink);color:#fff;padding:6px 10px;font:600 13px 'Fira Sans',sans-serif;cursor:pointer;flex:none}
+@media (prefers-color-scheme:dark){.dl{color:#0e1526}}
+.wip{font-size:12px;color:var(--mute);flex:none}
+.duel{display:flex;flex-direction:column;gap:12px;align-self:flex-start;width:min(780px,100%)}
+.duel .msg{align-self:stretch;max-width:100%}
+.msg img.nb{max-height:none;width:100%;height:auto;background:#fff;border:1px solid var(--line);margin-bottom:0}
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.sv{border:0;border-radius:8px;background:var(--line);color:var(--text);padding:6px 10px;font:600 13px 'Fira Sans',sans-serif;cursor:pointer}
+.pick{display:block;margin-top:10px;border:0;border-radius:10px;background:var(--ink);color:#fff;font:700 14px 'Fira Sans',sans-serif;padding:9px 14px;cursor:pointer}
+@media (prefers-color-scheme:dark){.pick{color:#0e1526}}
+:root{--glow:rgba(28,63,184,.18)}
+body{background-image:radial-gradient(900px 500px at 85% -10%,var(--glow),transparent 60%),radial-gradient(700px 400px at -10% 110%,rgba(226,85,58,.12),transparent 60%),linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:auto,auto,24px 24px,24px 24px}
+header{backdrop-filter:blur(8px)}
+.logo{background:linear-gradient(90deg,var(--bear),var(--ink));-webkit-background-clip:text;background-clip:text;color:transparent}
+.logo span{-webkit-text-fill-color:initial}
+.ib,.chip,.bar{box-shadow:0 2px 8px rgba(20,30,60,.08);transition:transform .15s,border-color .15s}
+.ib:active,.chip:active,#send:active{transform:scale(.96)}
+.msg{box-shadow:0 4px 14px rgba(20,30,60,.08)}
+.msg.u{background:linear-gradient(135deg,var(--ink),#4f6bff);}
+#send{background:linear-gradient(135deg,var(--ink),#4f6bff);box-shadow:0 4px 12px var(--glow)}
+.hero h1{background:linear-gradient(90deg,var(--bear),var(--ink));-webkit-background-clip:text;background-clip:text;color:transparent}
+#ov{position:fixed;inset:0;z-index:50;background:rgba(8,12,24,.6);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:16px}
+#ov[hidden]{display:none}
+#ov .card{position:relative;width:min(420px,100%);max-height:92vh;overflow-y:auto;background:var(--card);border:1.5px solid var(--line);border-radius:20px;padding:24px 20px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+#ov h2{margin:0 0 12px;color:var(--bear)}
+#ov .x{position:absolute;top:10px;right:10px;border:0;background:transparent;color:var(--mute);font-size:18px;cursor:pointer}
+#ov input{width:100%;margin:6px 0;padding:12px;border-radius:12px;border:1.5px solid var(--line);background:var(--paper);color:var(--text);font:16px 'Fira Sans',sans-serif}
+#ov button{font-family:inherit;cursor:pointer}
+#ov .pri{width:100%;margin-top:8px;padding:12px;border:0;border-radius:12px;background:linear-gradient(135deg,var(--ink),#4f6bff);color:#fff;font-weight:700;font-size:15px}
+.tabs{display:flex;gap:6px;margin-bottom:10px}.tabs button{flex:1;padding:9px;border-radius:10px;border:1.5px solid var(--line);background:transparent;color:var(--text);font-weight:600}.tabs .on{background:var(--ink);border-color:var(--ink);color:#fff}
+.or{text-align:center;color:var(--mute);font-size:13px;margin:14px 0 8px}
+.soc{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap}
+.gh{padding:10px 18px;border-radius:10px;border:0;background:#24292f;color:#fff;font-weight:600;height:40px}
+.mut{color:var(--mute);font-size:13px}.amsg{margin-top:10px;font-size:14px;color:var(--margin);min-height:18px}
+.bal{margin:12px 0;padding:14px;border-radius:14px;background:var(--paper);border:1.5px solid var(--line)}#bal{font-size:20px;font-weight:800;color:var(--ink)}
+.ref{display:flex;gap:6px}.ref button{padding:0 14px;border-radius:12px;border:0;background:var(--ink);color:#fff;font-weight:600;margin:6px 0}
+.amts{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}.amts button{padding:7px 12px;border-radius:999px;border:1.5px solid var(--line);background:transparent;color:var(--text);font-weight:600}
+.payopts{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.po{display:block;width:100%;padding:11px 12px;border-radius:12px;border:1.5px solid var(--ink);background:transparent;color:var(--ink);font:600 14px 'Fira Sans',sans-serif;text-align:center;text-decoration:none;cursor:pointer}
+.out{margin-top:14px;width:100%;padding:10px;border-radius:12px;border:1.5px solid var(--line);background:transparent;color:var(--mute)}
+.err{color:var(--margin)}
+.dots::after{content:"…";animation:b 1s infinite}
+@keyframes b{50%{opacity:.2}}
+footer{padding:8px 16px 12px 60px}
+.prev{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.prev div{position:relative}
+.prev img{height:64px;border-radius:8px;border:1.5px solid var(--line);display:block}
+.prev button{position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;border:0;background:var(--margin);color:#fff;font-size:12px;cursor:pointer;line-height:1}
+.bar{display:flex;gap:8px;align-items:flex-end;background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:8px}
+.bar:focus-within{border-color:var(--ink)}
+textarea{flex:1;border:0;outline:0;resize:none;background:transparent;color:var(--text);font:16px/1.4 'Fira Sans',sans-serif;max-height:140px;min-height:40px;padding:9px 4px;overflow-y:auto}
+.bar button{border:0;border-radius:10px;height:40px;min-width:40px;font-size:18px;cursor:pointer}
+#att{background:var(--paper);color:var(--text)}
+#send{background:var(--ink);color:#fff;font:700 15px 'Fira Sans',sans-serif;padding:0 16px}
+@media (prefers-color-scheme:dark){#send{color:#0e1526}}
+#send:disabled{opacity:.45;cursor:default}
+textarea:focus-visible{outline:0}
+button:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.note{font-size:12px;color:var(--mute);margin-top:6px}
+@media (min-width:900px){.app{border-left:1.5px solid var(--line);border-right:1.5px solid var(--line);background:color-mix(in srgb,var(--paper) 82%,transparent)}.msg{font-size:17px;max-width:min(780px,86%)}header{padding-top:18px}.logo{font-size:26px}.chip:hover,.ex button:hover,.ib:hover{border-color:var(--ink)}}
+@media (max-height:520px){.hero{margin:0}.hero p{display:none}header{padding-top:6px}}
+@media (max-width:520px){.app::before{left:28px}.msg{font-size:15.5px;max-width:100%}.ib{width:40px;height:40px}#send{padding:0 12px}.note{display:none}header,.chips,main,footer{padding-left:40px}.tag{display:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div class="logo"><span>🐻</span>GrizzlyAI</div>
+  <div class="tag">Сфоткай задание — получи решение</div>
+  <button class="ib" id="acc" title="Кабинет" aria-label="Кабинет">👤</button>
+  <button class="ib" id="newchat" title="Новый чат" aria-label="Новый чат">＋</button>
+</header>
+<div class="chips" id="chips" role="group" aria-label="Предмет"></div>
+<main id="chat" aria-live="polite"></main>
+<footer>
+  <div class="prev" id="prev"></div>
+  <div class="bar">
+    <button id="att" aria-label="Прикрепить фото">📷</button>
+    <textarea id="inp" rows="1" placeholder="Задание или фото…"></textarea>
+    <button id="send">Решить</button>
+  </div>
+  <input type="file" id="file" accept="image/*" multiple hidden>
+  <div class="note">GrizzlyAI может ошибаться — проверяй важные ответы.</div>
+</footer>
+
+</div>
+<div id="ov" hidden><div class="card">
+  <button class="x" id="ovx" aria-label="Закрыть">✕</button>
+  <div id="auth">
+    <h2>Вход в GrizzlyAI</h2>
+    <div class="tabs"><button id="tl" class="on">Вход</button><button id="tr">Регистрация</button></div>
+    <div id="step1">
+      <input id="em" type="email" placeholder="Почта (gmail, hotmail, yandex, mail.ru)" autocomplete="email">
+      <input id="pw" type="password" placeholder="Пароль (от 8 символов)" autocomplete="current-password">
+      <button class="pri" id="go">Получить код на почту</button>
+      <div class="or">или быстро, без кода</div>
+      <div class="soc"><div id="gbtn"></div><button class="gh" id="ghb">GitHub</button></div>
+    </div>
+    <div id="step2" hidden>
+      <p class="mut">Мы отправили 10-значный код на почту.</p>
+      <input id="cd" inputmode="numeric" maxlength="10" placeholder="••••••••••">
+      <button class="pri" id="ok">Подтвердить</button>
+    </div>
+    <div class="amsg" id="amsg"></div>
+  </div>
+  <div id="cab" hidden>
+    <h2>Личный кабинет</h2><div class="mut" id="cem"></div>
+    <div class="bal"><div class="mut">Баланс</div><div id="bal">—</div></div>
+    <button class="pri" id="claim" hidden>🎁 Принять 1M бесплатных токенов</button>
+    <div class="mut">Твоя реферальная ссылка:</div>
+    <div class="ref"><input id="rf" readonly><button id="cp">Копировать</button></div>
+    <div class="mut" style="margin-top:14px">Пополнить (минимум $0.10)</div>
+    <div class="amts" id="amts"></div>
+    <div class="ref"><input id="am" type="number" min="0.1" step="0.1" placeholder="Своя сумма, $"><button id="pay">Оплатить</button></div>
+    <div class="payopts" id="payopts" hidden></div>
+    <div class="amsg" id="cmsg"></div>
+    <button class="out" id="lo">Выйти</button>
+  </div>
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<script>
+const BACKEND = "http://localhost:3000";
+const GOOGLE_ID = "";
+const GITHUB_ID = "";
+const API_URL = BACKEND + "/api/chat";
+const M_SOLVE = "claude-fable-5.1";
+const M_CODE  = "qwen3.8-max";
+const M_DB    = "gpt-5.6-luna";
+const M_DRAW  = "seed-2.1-turbo";
+
+const SUBJECTS = [
+  {n:"Авто", l:"", m:M_SOLVE},
+  {n:"Математика", l:"", m:M_SOLVE}, {n:"Алгебра", l:"", m:M_SOLVE}, {n:"Геометрия", l:"", m:M_SOLVE, h:"Оформляй решение как в школьной тетради:\nДано: (данные задачи — углы в градусах, длины сторон и т.д.)\nНайти: ...\nРешение: (шаги с пояснениями)\nОтвет: ..."},
+  {n:"Физика", l:"", m:M_SOLVE}, {n:"Химия", l:"", m:M_SOLVE}, {n:"Биология", l:"", m:M_SOLVE},
+  {n:"Информатика", l:"", m:M_CODE},
+  {n:"Программирование", l:"", m:M_CODE, h:"Это раздел программирования: пиши рабочий код на любом языке, пояснения короткие."},
+  {n:"Базы данных", l:"", m:M_DB, h:"Это раздел баз данных: проектируй схемы, пиши SQL-запросы и скрипты, делай готовые файлы (.sql, .csv и т.д.)."},
+  {n:"English", l:"English", m:M_SOLVE}, {n:"Русский язык", l:"русском", m:M_SOLVE}, {n:"Қазақ тілі", l:"казахском", m:M_SOLVE},
+  {n:"Қазақ әдебиеті", l:"казахском", m:M_SOLVE}, {n:"Қазақстан тарихы", l:"казахском", m:M_SOLVE},
+  {n:"История", l:"", m:M_SOLVE}, {n:"География", l:"", m:M_SOLVE}
+];
+const EXAMPLES = ["Реши: √(x+5) = x−1", "Найди производную x³·sin x", "Напиши цикл на Python для суммы 1..n", "Қазақ тілінен: зат есімді тап"];
+
+const $ = id => document.getElementById(id);
+const chat = $("chat"), inp = $("inp"), sendBtn = $("send"), prev = $("prev");
+let subject = SUBJECTS[0], history = [], images = [], busy = false, pendingDuel = null;
+
+function renderChips(){
+  $("chips").innerHTML = "";
+  SUBJECTS.forEach(s => {
+    const b = document.createElement("button");
+    b.className = "chip"; b.textContent = s.n;
+    b.setAttribute("aria-pressed", s === subject);
+    b.onclick = () => { subject = s; renderChips(); };
+    $("chips").appendChild(b);
+  });
+}
+
+function hero(){
+  chat.innerHTML = `<div class="hero"><h1>Домашка решена. Объяснение — в комплекте.</h1>
+  <p>Пришли фото задания или напиши условие. GrizzlyAI решит по шагам: математику с корнями и формулами, информатику, английский, казахский и другие предметы.</p>
+  <div class="ex"></div></div>`;
+  EXAMPLES.forEach(t => {
+    const b = document.createElement("button"); b.textContent = t;
+    b.onclick = () => { inp.value = t; inp.focus(); };
+    chat.querySelector(".ex").appendChild(b);
+  });
+}
+
+function system(x = ""){
+  const lang = subject.l
+    ? `Предмет: ${subject.n}. Отвечай на ${subject.l} языке.`
+    : subject === SUBJECTS[0] ? `Предмет определи сам по заданию.` : `Предмет: ${subject.n}.`;
+  return `Ты — GrizzlyAI, школьный помощник, который решает домашние задания (ГДЗ). ${lang} ${subject.h || ""}
+Правила:
+- Помогаешь только со школьными предметами: математика, алгебра, геометрия, физика, химия, биология, информатика, английский, русский, казахский язык и литература, история, география и т.п. Если вопрос не про учёбу — вежливо откажись и предложи прислать задание. Просьбы написать код, программу, базу данных или файл разрешены.
+- Если пользователь прислал фото, внимательно прочитай все задания на нём и реши каждое по номеру.
+- Язык ответа: по предметам на казахском (Қазақ тілі, әдебиет, Қазақстан тарихы) отвечай на казахском; по английскому — задание и ответы на английском, пояснения на языке пользователя; в остальных случаях — на языке, на котором написал пользователь.
+- Решай по шагам, коротко и понятно, в конце напиши «Ответ:» с итогом.
+- Формулы, корни, дроби, степени пиши в LaTeX: $...$ для строчных и $$...$$ для отдельных (например $\\sqrt{x+5}$). Для информатики давай код в блоках \`\`\`.
+- Для уравнений с корнями делай проверку корней. Не выдумывай данные, которых нет в задании — если что-то не видно на фото, так и скажи.
+- Если просят написать код, программу, базу данных, таблицу или любой файл — выдай готовый файл отдельным блоком кода, указав имя файла после языка через двоеточие: \`\`\`python:main.py, \`\`\`csv:data.csv, \`\`\`txt:notes.txt, \`\`\`sql:db.sql, \`\`\`json:data.json (подойдёт любое расширение). Один файл — один блок, внутри только содержимое файла без пояснений. Для CSV первая строка — заголовки, разделитель — запятая. Пояснения пиши вне блока.
+- Если запрос сложный (сайт, приложение, бот, игра, большая программа) — работай как программист-агент: сразу выдай полный рабочий код одним файлом, без длинных объяснений и вступлений. Сайт — один index.html со встроенными CSS и JS. Не обрывай код и не оставляй заглушек вроде «тут твой код». После файла — 1–2 строки: что сделано и как запустить. Несколько файлов давай только если без этого никак, каждый отдельным блоком.
+- Если пользователь спрашивает, какая ты модель, отвечай: «Я GrizzlyAI».` + x;
+}
+
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+const EXT={python:"py",py:"py",javascript:"js",js:"js",typescript:"ts",html:"html",css:"css",json:"json",csv:"csv",sql:"sql",txt:"txt",text:"txt",plaintext:"txt",bash:"sh",sh:"sh",java:"java",cpp:"cpp",c:"c",xml:"xml",yaml:"yml",yml:"yml",md:"md",markdown:"md"};
+function md(t){
+  const blocks = [];
+  t = t.replace(/```([^\n`]*)\n?([\s\S]*?)(```|$)/g, (_, info, c, end) => {
+    info = info.trim(); let l = info, name = "";
+    const i = info.indexOf(":");
+    if (i > -1){ l = info.slice(0, i); name = info.slice(i + 1).trim(); }
+    l = l.toLowerCase();
+    if (!name && l) name = "file." + (EXT[l] || l);
+    name = name.replace(/[^\p{L}\p{N}._ -]/gu, "_");
+    blocks.push({name, c: c.replace(/\n$/, ""), done: end === "```"});
+    return `\u0000${blocks.length-1}\u0000`;
+  });
+  t = esc(t)
+    .replace(/^#{1,4}\s+(.+)$/gm, "<b>$1</b>")
+    .replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>")
+    .replace(/`([^`\n]+)`/g, "<code>$1</code>");
+  return t.replace(/\u0000(\d+)\u0000/g, (_, i) => {
+    const b = blocks[i];
+    const head = b.name ? `<div class="fhead"><span>📄 ${esc(b.name)}</span>${b.done ? `<button class="dl" data-n="${b.name}" data-c="${encodeURIComponent(b.c)}">⬇ Скачать</button>` : `<span class="wip">⏳ пишу…</span>`}</div>` : "";
+    return `${head}<pre><code>${esc(b.c)}</code></pre>`;
+  });
+}
+function math(el){
+  try{ renderMathInElement(el,{delimiters:[{left:"$$",right:"$$",display:true},{left:"\\[",right:"\\]",display:true},{left:"\\(",right:"\\)",display:false},{left:"$",right:"$",display:false}],throwOnError:false}); }catch(e){}
+}
+
+function addMsg(cls, html){
+  if (chat.querySelector(".hero")) chat.innerHTML = "";
+  const d = document.createElement("div"); d.className = "msg " + cls; d.innerHTML = html;
+  chat.appendChild(d); chat.scrollTop = chat.scrollHeight; return d;
+}
+
+function getKey(){ const t = localStorage.getItem("gai_tok"); if (!t) openAuth(); return t; }
+
+function shrink(file){
+  return new Promise(res => {
+    const r = new FileReader();
+    r.onload = () => {
+      const im = new Image();
+      im.onload = () => {
+        const m = 1400, k = Math.min(1, m / Math.max(im.width, im.height));
+        const c = document.createElement("canvas"); c.width = im.width * k; c.height = im.height * k;
+        c.getContext("2d").drawImage(im, 0, 0, c.width, c.height);
+        res(c.toDataURL("image/jpeg", .85));
+      };
+      im.src = r.result;
+    };
+    r.readAsDataURL(file);
+  });
+}
+function renderPrev(){
+  prev.innerHTML = "";
+  images.forEach((u, i) => {
+    const d = document.createElement("div");
+    d.innerHTML = `<img src="${u}" alt="Фото задания"><button aria-label="Убрать фото">✕</button>`;
+    d.querySelector("button").onclick = () => { images.splice(i, 1); renderPrev(); };
+    prev.appendChild(d);
+  });
+}
+
+const DRAW_RE = /чертеж|чертёж|рисун|изображен|нарисуй|начерти|построй|тетрад|картинк/i;
+const DRAW_PROMPT = `Ты рисуешь страницу школьной тетради в клетку по задаче по геометрии как SVG-картинку. Выведи ТОЛЬКО SVG-код, без пояснений и без markdown.
+Требования:
+- Корень: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1100" width="800" height="1100">
+- Фон белый, клетка 20px светло-голубыми линиями (через <pattern>), слева красное поле: вертикальная линия x=60.
+- Рукописный вид: font-family="'Comic Sans MS','Segoe Script',cursive", текст синий (#1c3fb8), размер 20–24.
+- Сверху «Дано:» (данные задачи: углы в градусах, длины и т.д.), затем «Найти:».
+- Ниже аккуратный чертёж линиями: подпиши вершины буквами (A, B, C…), отметь углы дугами и числами, стороны длинами, прямой угол — квадратиком.
+- Под чертежом «Решение:» по шагам (короткие строки), в конце «Ответ:» — подчеркни красным.
+- Всё должно помещаться в 800×1100, текст не выходит за края. Язык — как в задании.
+- Запрещены теги <script>, <image>, <foreignObject>.`;
+const DRAW_HINT = `
+- ДОПОЛНИТЕЛЬНО: пользователь просит чертёж. Сначала оформи «Дано / Найти / Решение / Ответ», а в конце нарисуй чертёж к задаче «палочками» — текстом (ASCII) в блоке кода \`\`\` БЕЗ указания языка и имени файла: символы / \\ | _ - + . , подпиши вершины буквами, отметь углы и стороны числами. Чертёж аккуратный, до 40 символов в ширину.`;
+const svgStore = {}; let nbN = 0;
+
+async function streamChat(model, msgs, key, onText){
+  const r = await fetch(API_URL, {method:"POST", headers:{"Content-Type":"application/json","Authorization":"Bearer " + key},
+    body: JSON.stringify({model, stream: true, ...(/^gpt-/.test(model) ? {} : {temperature: .3}), max_tokens: 16000, messages: msgs})});
+  if (!r.ok){ const e = await r.text(); throw new Error(r.status === 401 ? "Нужно войти в аккаунт." : `Ошибка ${r.status}: ${e.slice(0, 200)}`); }
+  const rd = r.body.getReader(), dec = new TextDecoder(); let buf = "", raw = "", full = "";
+  for(;;){
+    const {done, value} = await rd.read(); if (done) break;
+    const ch = dec.decode(value, {stream:true}); raw += ch; buf += ch;
+    const lines = buf.split("\n"); buf = lines.pop();
+    for (const ln of lines){
+      if (!ln.startsWith("data:")) continue;
+      const d = ln.slice(5).trim(); if (d === "[DONE]") continue;
+      try{ const j = JSON.parse(d); const t = j.choices?.[0]?.delta?.content ?? j.delta?.text; if (t){ full += t; onText(full); } }catch(e){}
+    }
+  }
+  if (!full){
+    try{
+      const j = JSON.parse(raw); full = j.choices?.[0]?.message?.content || "";
+      if (full) onText(full);
+      else if (j.error) throw new Error("Ответ API: " + (j.error.message || JSON.stringify(j.error)));
+    }catch(e2){ if (/^Ответ API/.test(e2.message)) throw e2; }
+  }
+  if (!full) throw new Error("Пустой ответ. Ответ сервера: " + raw.slice(0, 300));
+  return full;
+}
+
+async function drawNotebook(content, key){
+  const r = await fetch(API_URL, {method:"POST", headers:{"Content-Type":"application/json","Authorization":"Bearer " + key},
+    body: JSON.stringify({model: M_DRAW, max_tokens: 12000, temperature: .4, messages: [{role:"system", content: DRAW_PROMPT}, {role:"user", content}]})});
+  const t = await r.text();
+  if (!r.ok) throw new Error(`Ошибка ${r.status}: ${t.slice(0, 200)}`);
+  let j; try{ j = JSON.parse(t); }catch(e){ throw new Error("Странный ответ сервера: " + t.slice(0, 200)); }
+  const c = j.choices?.[0]?.message?.content || "";
+  const m = c.match(/<svg[\s\S]*<\/svg>/i);
+  if (!m) throw new Error("Модель не вернула рисунок. " + (j.error?.message || c.slice(0, 200)));
+  let svg = m[0].replace(/<script[\s\S]*?<\/script>/gi, "").replace(/<foreignObject[\s\S]*?<\/foreignObject>/gi, "");
+  const root = svg.match(/<svg[^>]*>/i)[0]; let nr = root;
+  if (!/xmlns=/.test(nr)) nr = nr.replace("<svg", '<svg xmlns="http://www.w3.org/2000/svg"');
+  const vb = nr.match(/viewBox\s*=\s*"\s*[\d.\-]+[ ,]+[\d.\-]+[ ,]+([\d.]+)[ ,]+([\d.]+)\s*"/i);
+  if (!/\swidth\s*=/.test(nr)){
+    nr = vb ? nr.replace("<svg", `<svg width="${vb[1]}" height="${vb[2]}"`) : nr.replace("<svg", '<svg width="800" height="1100" viewBox="0 0 800 1100"');
+  }
+  return svg.replace(root, nr);
+}
+
+function saveBlob(blob, name){
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+chat.addEventListener("click", e => {
+  const b = e.target.closest(".sv, .pick"); if (!b) return;
+  if (b.classList.contains("pick")){
+    const duel = b.closest(".duel"); if (!duel || duel.dataset.done) return; duel.dataset.done = "1";
+    const card = b.closest(".msg");
+    duel.querySelectorAll(".msg").forEach(c => { if (c !== card) c.remove(); });
+    duel.querySelectorAll(".pick").forEach(x => x.remove());
+    card.querySelector(".who").textContent += " ✓ выбрано";
+    if (pendingDuel){ history.push({role:"assistant", content: pendingDuel.textB}); pendingDuel = null; }
+    return;
+  }
+  const svg = svgStore[b.dataset.id]; if (!svg) return;
+  if (b.dataset.f === "svg"){ saveBlob(new Blob([svg], {type:"image/svg+xml"}), "chertezh.svg"); return; }
+  const im = new Image();
+  im.onload = () => {
+    const w = im.naturalWidth || 800, h = im.naturalHeight || 1100, c = document.createElement("canvas");
+    c.width = w * 2; c.height = h * 2;
+    const x = c.getContext("2d"); x.fillStyle = "#fff"; x.fillRect(0, 0, c.width, c.height); x.drawImage(im, 0, 0, c.width, c.height);
+    c.toBlob(bl => bl && saveBlob(bl, "chertezh.png"), "image/png");
+  };
+  im.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+});
+
+async function sendDraw(text, key){
+  busy = true; sendBtn.disabled = true;
+  const imgs = images.slice(); images = []; renderPrev(); inp.value = ""; inp.style.height = "auto";
+  addMsg("u", imgs.map(u => `<img src="${u}" alt="">`).join("") + esc(text));
+  const content = [{type:"text", text}]; imgs.forEach(u => content.push({type:"image_url", image_url:{url:u}}));
+  const prevMsgs = history.slice(-10).map(m => ({role:m.role, content: Array.isArray(m.content)
+    ? m.content.filter(c => c.type === "text").map(c => c.text).join("\n") + (m.content.length > 1 ? "\n[фото]" : "") : m.content}));
+  history.push({role:"user", content});
+  const duel = document.createElement("div"); duel.className = "duel";
+  duel.innerHTML = `<div class="msg a"><div class="who">Вариант 1 · 📓 Тетрадка с чертежом</div><span class="body dots"></span></div><div class="msg a"><div class="who">Вариант 2 · 📝 Решение + чертёж палочками</div><span class="body dots"></span></div>`;
+  chat.appendChild(duel); chat.scrollTop = chat.scrollHeight;
+  const [cA, cB] = duel.querySelectorAll(".msg"), bA = cA.querySelector(".body"), bB = cB.querySelector(".body");
+  const pA = drawNotebook(content, key).then(svg => {
+    const id = "nb" + (++nbN); svgStore[id] = svg; bA.classList.remove("dots");
+    bA.innerHTML = `<img class="nb" alt="Тетрадка" src="data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}"><div class="acts"><button class="sv" data-id="${id}" data-f="svg">⬇ SVG</button><button class="sv" data-id="${id}" data-f="png">⬇ PNG</button></div>`;
+    chat.scrollTop = chat.scrollHeight;
+  });
+  const pB = streamChat(M_SOLVE, [{role:"system", content: system(DRAW_HINT)}, ...prevMsgs, {role:"user", content}], key,
+    t => { bB.classList.remove("dots"); bB.innerHTML = md(t); chat.scrollTop = chat.scrollHeight; }).then(full => { math(bB); return full; });
+  const [rA, rB] = await Promise.allSettled([pA, pB]);
+  if (rA.status === "rejected"){ bA.classList.remove("dots"); bA.innerHTML = `<span class="err">${esc(rA.reason?.message || "Не удалось нарисовать тетрадку")}</span>`; }
+  if (rB.status === "rejected"){ bB.classList.remove("dots"); bB.innerHTML = `<span class="err">${esc(rB.reason?.message || "Не удалось получить ответ")}</span>`; }
+  const okA = rA.status === "fulfilled", okB = rB.status === "fulfilled";
+  if (okA && okB){
+    pendingDuel = {textB: rB.value};
+    [cA, cB].forEach(c => { const b = document.createElement("button"); b.className = "pick"; b.textContent = "✅ Выбрать этот вариант"; c.appendChild(b); });
+  } else if (okB){ history.push({role:"assistant", content: rB.value}); }
+  else if (okA){ history.push({role:"assistant", content: "(Решение и чертёж показаны на странице тетради.)"}); }
+  else { history.pop(); }
+  busy = false; sendBtn.disabled = false; chat.scrollTop = chat.scrollHeight; inp.focus();
+}
+
+async function send(){
+  const text = inp.value.trim();
+  if (busy || (!text && !images.length)) return;
+  if (pendingDuel){ history.push({role:"assistant", content: pendingDuel.textB}); pendingDuel = null; }
+  const key = getKey(); if (!key) return;
+  if (subject.n === "Геометрия" && DRAW_RE.test(text)) return sendDraw(text, key);
+  busy = true; sendBtn.disabled = true;
+  const imgs = images.slice(); images = []; renderPrev(); inp.value = ""; inp.style.height = "auto";
+
+  addMsg("u", imgs.map(u => `<img src="${u}" alt="">`).join("") + esc(text || "Реши задания с фото"));
+  const content = [{type:"text", text: text || "Реши все задания с фото."}];
+  imgs.forEach(u => content.push({type:"image_url", image_url:{url:u}}));
+  history.push({role:"user", content});
+  const msgs = history.slice(-10).map((m, i, a) => i < a.length - 1 && Array.isArray(m.content)
+    ? {role:m.role, content:m.content.filter(c => c.type === "text").map(c => c.text).join("\n") + (m.content.length > 1 ? "\n[фото]" : "")} : m);
+
+  const out = addMsg("a", `<div class="who">GrizzlyAI</div><span class="body dots"></span>`);
+  const body = out.querySelector(".body"); let full = "";
+  try{
+    const r = await fetch(API_URL, {method:"POST", headers:{"Content-Type":"application/json","Authorization":"Bearer " + key},
+      body: JSON.stringify({model: subject.m, stream: true, ...(/^gpt-/.test(subject.m) ? {} : {temperature: .3}), max_tokens: 16000, messages: [{role:"system", content: system()}, ...msgs]})});
+    if (!r.ok){ const e = await r.text(); throw new Error(r.status === 401 ? "Нужно войти в аккаунт." : `Ошибка ${r.status}: ${e.slice(0,200)}`); }
+    const rd = r.body.getReader(), dec = new TextDecoder(); let buf = "", raw = "";
+    for(;;){
+      const {done, value} = await rd.read(); if (done) break;
+      const chunk = dec.decode(value, {stream:true}); raw += chunk; buf += chunk;
+      const lines = buf.split("\n"); buf = lines.pop();
+      for (const ln of lines){
+        if (!ln.startsWith("data:")) continue;
+        const d = ln.slice(5).trim(); if (d === "[DONE]") continue;
+        try{ const j = JSON.parse(d); const t = j.choices?.[0]?.delta?.content ?? j.delta?.text; if (t){ full += t; body.classList.remove("dots"); body.innerHTML = md(full); chat.scrollTop = chat.scrollHeight; } }catch(e){}
+      }
+    }
+    if (!full){
+      try{
+        const j = JSON.parse(raw);
+        full = j.choices?.[0]?.message?.content || j.content?.[0]?.text || "";
+        if (full){ body.classList.remove("dots"); body.innerHTML = md(full); }
+        else if (j.error || j.message) throw new Error("Ответ API: " + (j.error?.message || JSON.stringify(j.error || j.message)));
+      }catch(e2){ if (/^Ответ API/.test(e2.message)) throw e2; }
+    }
+    if (!full) throw new Error("Пустой ответ от модели. Ответ сервера: " + raw.slice(0, 300));
+    math(body); history.push({role:"assistant", content: full});
+  }catch(e){
+    body.classList.remove("dots"); const m = /fetch|Network/i.test(e.message || "") ? "Нет связи с сервером. Если открыл файл внутри приложения Claude — так не заработает, выложи сайт на хостинг (GitHub Pages, Netlify) или открой index.html в браузере." : (e.message || "Не удалось получить ответ");
+    body.innerHTML = `<span class="err">${esc(m)}</span>`;
+    if (!full) history.pop();
+  }
+  busy = false; sendBtn.disabled = false; chat.scrollTop = chat.scrollHeight; inp.focus();
+}
+
+chat.addEventListener("click", e => {
+  const b = e.target.closest(".dl"); if (!b) return;
+  let c = decodeURIComponent(b.dataset.c); const n = b.dataset.n;
+  if (/\.csv$/i.test(n)) c = "\uFEFF" + c;
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([c], {type:"text/plain;charset=utf-8"}));
+  a.download = n; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+});
+$("att").onclick = () => $("file").click();
+$("file").onchange = async e => {
+  for (const f of e.target.files) images.push(await shrink(f));
+  e.target.value = ""; renderPrev();
+};
+inp.addEventListener("paste", async e => {
+  for (const it of e.clipboardData.items) if (it.type.startsWith("image/")){ images.push(await shrink(it.getAsFile())); renderPrev(); }
+});
+inp.addEventListener("input", () => { inp.style.height = "auto"; inp.style.height = inp.scrollHeight + "px"; });
+inp.addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey && innerWidth > 700){ e.preventDefault(); send(); } });
+sendBtn.onclick = send;
+$("newchat").onclick = () => { history = []; pendingDuel = null; images = []; renderPrev(); hero(); };
+
+const TPU = 2500000, DOMS = ["gmail.com","hotmail.com","yandex.ru","yandex.com","ya.ru","mail.ru"];
+let mode = "login", pend = "";
+const fmtTok = t => (t >= 1e6 ? +(t/1e6).toFixed(2) + "M" : Math.round(t).toLocaleString("ru")) + " токенов";
+const fmtBal = t => `${fmtTok(t)} ($${(t/TPU).toFixed(2)})`;
+const api = async (path, body, auth) => {
+  if (BACKEND.includes("YOUR-SERVER")) throw new Error("В index.html не указан адрес сервера: впиши его в BACKEND в начале скрипта.");
+  let r; try{ r = await fetch(BACKEND + path, {method: body ? "POST" : "GET", headers: {"Content-Type":"application/json", ...(auth ? {Authorization: "Bearer " + localStorage.getItem("gai_tok")} : {})}, body: body ? JSON.stringify(body) : undefined}); }
+  catch(e){ throw new Error("Сервер недоступен (" + BACKEND + "). Проверь, что он запущен, адрес начинается с https:// и в ORIGIN указан адрес сайта."); }
+  const j = await r.json().catch(() => ({})); if (!r.ok) { if (r.status === 401 && auth) localStorage.removeItem("gai_tok"); throw new Error(j.error || "Ошибка " + r.status); } return j;
+};
+const am = (id, t, ok) => { const e = $(id); e.textContent = t; e.style.color = ok ? "var(--ink)" : ""; };
+function openAuth(){ $("ov").hidden = false; if (localStorage.getItem("gai_tok")) showCab(); else { $("auth").hidden = false; $("cab").hidden = true; } }
+async function showCab(){
+  $("auth").hidden = true; $("cab").hidden = false;
+  try{
+    const m = await api("/api/me", null, true);
+    $("cem").textContent = m.email; $("bal").textContent = fmtBal(m.tokens); $("claim").hidden = m.claimed;
+    $("rf").value = "https://mrbrek.github.io/?ref=" + m.ref;
+  }catch(e){ $("cab").hidden = true; $("auth").hidden = false; am("amsg", e.message); }
+}
+const done = tok => { localStorage.setItem("gai_tok", tok); showCab(); };
+const refCode = () => localStorage.getItem("gai_ref") || "";
+async function quickLogin(path, body){ try{ const r = await api(path, {...body, ref: refCode()}); done(r.token); }catch(e){ openAuth(); am("amsg", e.message); } }
+$("acc").onclick = openAuth; $("ovx").onclick = () => { $("ov").hidden = true; };
+$("tl").onclick = () => { mode = "login"; $("tl").className = "on"; $("tr").className = ""; };
+$("tr").onclick = () => { mode = "reg"; $("tr").className = "on"; $("tl").className = ""; };
+$("go").onclick = async () => {
+  const e = $("em").value.trim().toLowerCase();
+  if (!DOMS.includes(e.split("@")[1] || "")) return am("amsg", "Разрешены только gmail.com, hotmail.com, yandex.ru, mail.ru");
+  try{ await api("/api/start", {email: e, password: $("pw").value, mode, ref: refCode()}); pend = e; $("step1").hidden = true; $("step2").hidden = false; am("amsg", ""); }catch(x){ am("amsg", x.message); }
+};
+$("ok").onclick = async () => { try{ done((await api("/api/verify", {email: pend, code: $("cd").value})).token); $("step1").hidden = false; $("step2").hidden = true; }catch(x){ am("amsg", x.message); } };
+$("ghb").onclick = () => { location.href = `https://github.com/login/oauth/authorize?client_id=${GITHUB_ID}&scope=user:email&state=gh&redirect_uri=${encodeURIComponent(location.origin + location.pathname)}`; };
+$("claim").onclick = async () => { try{ await api("/api/claim", {}, true); am("cmsg", "Начислено 1M токенов 🎉", true); showCab(); }catch(x){ am("cmsg", x.message); } };
+$("cp").onclick = () => { $("rf").select(); navigator.clipboard?.writeText($("rf").value); am("cmsg", "Ссылка скопирована", true); };
+$("lo").onclick = () => { localStorage.removeItem("gai_tok"); $("ov").hidden = true; };
+[0.1, 1, 5, 10, 25, 50, 100].forEach(v => { const b = document.createElement("button"); b.textContent = "$" + v; b.onclick = () => { $("am").value = v; }; $("amts").appendChild(b); });
+function showPay(url){
+  const box = $("payopts"); box.innerHTML = ""; box.hidden = false;
+  const m = url.match(/^https?:\/\/t\.me\/([^/?#]+)\?start=([^&#]+)/i);
+  const opts = [{t:"✈️ Открыть в Telegram", u:url, blank:true}];
+  if (m) opts.push({t:"🟢 Выбрать приложение (Nicegram и др.)", u:`tg://resolve?domain=${m[1]}&start=${m[2]}`, blank:false});
+  opts.forEach(o => {
+    const a = document.createElement("a"); a.className = "po"; a.textContent = o.t; a.href = o.u;
+    if (o.blank){ a.target = "_blank"; a.rel = "noopener"; }
+    box.appendChild(a);
+  });
+  const c = document.createElement("button"); c.className = "po"; c.textContent = "📋 Копировать ссылку";
+  c.onclick = () => { navigator.clipboard?.writeText(url); am("cmsg", "Ссылка скопирована, вставь её в любой чат в Nicegram и нажми на неё", true); };
+  box.appendChild(c);
+}
+$("pay").onclick = async () => {
+  const a = parseFloat($("am").value); if (!(a >= 0.1)) return am("cmsg", "Минимум $0.10");
+  try{
+    const inv = await api("/api/topup", {amount: a}, true); showPay(inv.url);
+    am("cmsg", `Счёт на $${a} создан. Ждём оплату…`, true);
+    for (let i = 0; i < 120; i++){ await new Promise(r => setTimeout(r, 5000));
+      const c = await api("/api/topup/check?id=" + inv.id, null, true);
+      if (c.paid){ $("payopts").hidden = true; am("cmsg", `Оплачено! +${fmtTok(a * TPU)}`, true); showCab(); return; } }
+  }catch(x){ am("cmsg", x.message); }
+};
+(function init(){
+  const q = new URLSearchParams(location.search);
+  if (q.get("ref")) localStorage.setItem("gai_ref", q.get("ref"));
+  if (q.get("code") && q.get("state") === "gh"){ history.replaceState(null, "", location.pathname); quickLogin("/api/github", {code: q.get("code")}); }
+  if (GOOGLE_ID){ const sc = document.createElement("script"); sc.src = "https://accounts.google.com/gsi/client"; sc.async = true;
+    sc.onload = () => { google.accounts.id.initialize({client_id: GOOGLE_ID, callback: r => quickLogin("/api/google", {credential: r.credential})}); google.accounts.id.renderButton($("gbtn"), {theme: "filled_black", size: "large", text: "continue_with"}); };
+    document.head.appendChild(sc); }
+  if (!localStorage.getItem("gai_tok")) openAuth();
+})();
+
+renderChips(); hero();
+</script>
+</body>
+</html>
